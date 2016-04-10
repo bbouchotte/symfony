@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% for flash_message in app.session.flashbag.get('login') %}
+    <div class="flash-notice">
+        {{ flash_message }}
+    </div>
+	{% endfor %}
+	Voir aussi la méthode
+	<a href="http://api.symfony.com/3.0/Symfony/Component/HttpFoundation/Session/Flash/FlashBagInterface.html#method_peek" target="_blank">
+		peek()
+	</a>
+	
+{% endblock %}

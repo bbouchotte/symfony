@@ -1,0 +1,355 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+	<a href="https://symfony.com/doc/current/book/doctrine.html" target="_blank">
+		<h2>Databases and Doctrine</h2>
+	</a>
+	
+	<a href="{{ path('mysql') }}">mysql</a>
+	
+	<h4>Configuring the Database</h4>
+	<pre># app/config/parameters.yml
+parameters:
+    database_driver:    pdo_mysql
+    database_host:      localhost
+    database_name:      test_project
+    database_user:      root
+    database_password:  password
+
+# ...</pre>
+		
+	<pre># app/config/config.yml
+doctrine:
+    dbal:
+        driver:   '%database_driver%'
+        host:     '%database_host%'
+        dbname:   '%database_name%'
+        user:     '%database_user%'
+        password: '%database_password%'</pre>
+		<span class="pre">dnf install php-mysqlnd</span>
+		<span class="pre">php bin/console doctrine:database:create</span>
+		<span class="pre">php bin/console doctrine:database:drop --force</span>
+		<pre># app/config/config.yml
+doctrine:
+    charset: utf8mb4
+    dbal:
+        default_table_options:
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
+		</pre>
+	<a href="https://symfony.com/doc/current/book/doctrine.html#creating-an-entity-class" target="_blank">
+		<h4>Creating an Entity Class</h4>
+	</a>
+		<span class="pre">php bin/console doctrine:generate:entity</span>
+	<ul>
+		<li>generate getters and setters methods in entity classes</li>
+		<li>generate repository classes on behalf of entities configured with the @ORM\Entity(repositoryClass="...") annotation;</li>
+		<li>generate the appropriate constructor for 1:n and n:m relations.</li>
+	</ul>
+	<pre># generates all entities in the AppBundle
+$ php bin/console doctrine:generate:entities AppBundle
+
+# generates all entities of bundles in the Acme namespace
+$ php bin/console doctrine:generate:entities Acme</pre>
+
+	<a href="https://symfony.com/doc/current/book/doctrine.html#creating-the-database-tables-schema" target="_blank">
+		<h4>Creating the Database Tables/Schema</h4>
+	</a>
+	<span class="pre">php bin/console doctrine:schema:update --force</span>
+	
+	<a href="https://symfony.com/doc/current/book/doctrine.html#persisting-objects-to-the-database" target="_blank">
+		<h4>Persisting Objects to the Database</h4>
+	</a>
+	<pre>// ...
+use AppBundle\Entity\Product;
+use Symfony\Component\HttpFoundation\Response;
+
+// ...
+public function createAction()
+{
+    $product = new Product();
+    $product->setName('Keyboard');
+    //...
+
+    $em = $this->getDoctrine()->getManager();
+
+    // tells Doctrine you want to (eventually) save the Product (no queries yet)
+    $em->persist($product);
+
+    // actually executes the queries (i.e. the INSERT query)
+    $em->flush();
+
+    return new Response('Saved new product with id '.$product->getId());
+}</pre>
+
+	<a href="https://symfony.com/doc/current/book/doctrine.html#fetching-objects-from-the-database" target="_blank">
+		<h4>Fetching Objects from the Database</h4>
+	</a>
+	<pre>public function showAction($productId)
+{
+    $product = $this->getDoctrine()
+        ->getRepository('AppBundle:Product')
+        ->find($productId);
+        
+    // Ou alors
+        
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Product');
+    
+    // query for a single product by its primary key (usually "id")
+    $product = $repository->find($productId);
+		
+    // dynamic method names to find a single product based on a column value
+    $product = $repository->findOneById($productId);
+    $product = $repository->findOneByName('Keyboard');
+	
+    // dynamic method names to find a group of products based on a column value
+    $products = $repository->findByPrice(19.99);
+		
+    // find *all* products
+    $products = $repository->findAll();
+
+    if (!$product) {
+        throw $this->createNotFoundException(
+            'No product found for id '.$productId
+        );
+    }
+
+    // ... do something, like pass the $product object into a template
+}</pre>
+	<p>Conditions:</p>
+	<pre>// query for a single product matching the given name and price
+$product = $repository->findOneBy(
+    array('name' => 'Keyboard', 'price' => 19.99)
+);
+
+// query for multiple products matching the given name, ordered by price
+$products = $repository->findBy(
+    array('name' => 'Keyboard'),
+    array('price' => 'ASC')
+);</pre>
+	
+	<h4>Updating an Object</h4>
+	<pre>    $em = $this->getDoctrine()->getManager();
+    $product = $em->getRepository('AppBundle:Product')->find($productId);
+
+    if (!$product) {
+        throw $this->createNotFoundException('No product found for id '.$productId);
+    }
+
+    $product->setName('New product name!');
+    $em->flush();</pre>
+    
+    <h4>Deleting an object</h4>
+    <pre>$em->remove($product);
+$em->flush();</pre>
+
+	<a href ="https://symfony.com/doc/current/book/doctrine.html#querying-for-objects-with-dql" target="_blank">
+		<h4>Querying for Objects with DQL</h4>
+	</a>
+    <p>Official 
+    	<a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html" target="_blank">
+    		Doctrine Query Language
+    	</a>
+    </p>
+	<pre>$em = $this->getDoctrine()->getManager();
+$query = $em->createQuery(
+    'SELECT p
+    FROM AppBundle:Product p
+    WHERE p.price > :price
+    ORDER BY p.price ASC'
+)->setParameter('price', '19.99');
+
+$products = $query->getResult();</pre>
+
+	<a href="https://symfony.com/doc/current/book/doctrine.html#querying-for-objects-using-doctrine-s-query-builder" target="_blank">
+		<h4>Querying for Objects Using Doctrine's Query Builder</h4>
+	</a>
+	<pre>$repository = $this->getDoctrine()
+    ->getRepository('AppBundle:Product');
+
+// createQueryBuilder automatically selects FROM AppBundle:Product
+// and aliases it to "p"
+$query = $repository->createQueryBuilder('p')
+    ->where('p.price > :price')
+    ->setParameter('price', '19.99')
+    ->orderBy('p.price', 'ASC')
+    ->getQuery();
+
+$products = $query->getResult();
+// to get just one result:
+// $product = $query->setMaxResults(1)->getOneOrNullResult();</pre>
+	<p>Doctrine's 
+		<a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/query-builder.html" target="_blank">
+			Query Builder
+		</a>
+	</p>
+	
+	<a href="https://symfony.com/doc/current/book/doctrine.html#custom-repository-classes" target="_blank">
+		<h4>Custom Repository Classes</h4>
+	</a>
+	<p>Add the name of the repository class to your mapping definition:</p>
+	<pre>namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\ProductRepository")
+ */
+class Product {
+    //...</pre>
+    <p>Doctrine can generate the repository class for you by running the command:</p>
+    <span class="pre">php bin/console doctrine:generate:entities AppBundle</span>
+    <p>Add a new method:</p>
+    <pre>    public function findAllOrderedByName()     {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT p FROM AppBundle:Product p ORDER BY p.name ASC'
+            )
+            ->getResult();
+    }</pre>
+    <p>The entity manager can be accessed via $this->getEntityManager() from inside the repository.</p>
+    <p>Use it:</p>
+    <pre>$em = $this->getDoctrine()->getManager();
+$products = $em->getRepository('AppBundle:Product')
+    ->findAllOrderedByName();</pre>
+    <p>When using a custom repository class, you still have access to the default finder methods such as find() and findAll().</p>
+    
+    <a href="https://symfony.com/doc/current/book/doctrine.html#entity-relationships-associations" target="_blank">
+    	<h4>Entity Relationships/Associations</h4>
+    </a>
+    <pre>php bin/console doctrine:generate:entity --no-interaction \
+    --entity="AppBundle:Category" \
+    --fields="name:string(255)"</pre>
+
+    <h5>Relationship Mapping Metadata</h5>
+    <p>To relate the Category and Product entities, start by creating a products property on the Category class:</p>
+    <pre>use Doctrine\Common\Collections\ArrayCollection;
+
+class Category {
+    // ...
+
+    /**
+     * @ORM\OneToMany(targetEntity="Product", mappedBy="category")
+     */
+    private $products;
+
+    public function __construct()     {
+        $this->products = new ArrayCollection();
+    }</pre>
+    <p>Add a $category property to the Product class:</p>
+    <pre>class Product {
+    // ...
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="products")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     */
+    private $category;</pre>
+    <p>tell Doctrine to generate the missing getter and setter methods for you:
+    	<span class="pre">php bin/console doctrine:generate:entities AppBundle</span>
+	</p>
+	<p>Before you continue, be sure to tell Doctrine to add the new category table, and product.category_id column, and new foreign key:</p>
+	<span class="pre">php bin/console doctrine:schema:update --force</span>
+	
+	<a href="https://symfony.com/doc/current/book/doctrine.html#saving-related-entities" target="_blank">
+		<h4>Saving Related Entities inside a controller</h4>
+	</a>
+	<pre>        $category = new Category();
+        $category->setName('Computer Peripherals');
+
+        $product = new Product();
+        $product->setName('Keyboard');
+        $product->setPrice(19.99);
+        $product->setDescription('Ergonomic and stylish!');
+
+        // relate this product to the category
+        $product->setCategory($category);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($category);
+        $em->persist($product);
+        $em->flush();</pre>
+        
+	<a href="https://symfony.com/doc/current/book/doctrine.html#fetching-related-objects" target="_blank">
+		<h4>Fetching Related Objects</h4>
+	</a>
+	<pre>    $product = $this->getDoctrine()
+        ->getRepository('AppBundle:Product')
+        ->find($productId);
+
+    $categoryName = $product->getCategory()->getName()</pre>
+    <pre>    $category = $this->getDoctrine()
+        ->getRepository('AppBundle:Category')
+        ->find($categoryId);
+
+    $products = $category->getProducts();	// array</pre>
+    
+    <h4>Joining Related Records</h4>
+    <p> you can avoid the second query by issuing a join in the original query. Add the following method to the ProductRepository class:</p>
+    <pre>public function findOneByIdJoinedToCategory($productId) {
+    $query = $this->getEntityManager()
+        ->createQuery(
+            'SELECT p, c FROM AppBundle:Product p
+            JOIN p.category c
+            WHERE p.id = :id'
+        )->setParameter('id', $productId);
+
+    try {
+        return $query->getSingleResult();
+    } catch (\Doctrine\ORM\NoResultException $e) {
+        return null;
+    }
+}</pre>
+
+	<h4>More Information on Associations</h4>
+	<p>See Doctrine's 
+		<a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/association-mapping.html" target="_blank">
+			Association Mapping Documentation.
+		</a>
+	</p>
+	
+	<a href="https://symfony.com/doc/current/book/doctrine.html#lifecycle-callbacks" target="_blank">
+		<h4>Lifecycle Callbacks</h4>
+	</a>
+	<p>Enabling the lifecycle callbacks: </p>
+	<pre>/**
+ * @ORM\Entity()
+ * @ORM\HasLifecycleCallbacks()
+ */
+class Product
+{
+    // ...</pre>
+    <p>Execute a method on any of the available lifecycle events: </p>
+    <pre>/**
+ * @ORM\PrePersist
+ */
+public function setCreatedAtValue()
+{
+    $this->createdAt = new \DateTime();
+}</pre>
+	<p>See Doctrine's  
+		<a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/events.html#lifecycle-events" target="_blank">
+			Lifecycle Events documentation.
+		</a>
+	<p>
+		<a href="https://symfony.com/doc/current/cookbook/doctrine/event_listeners_subscribers.html" target="_blank">
+			How to Register Event Listeners and Subscribers.
+		</a>
+	</p>
+	<h4>Doctrine Field Types Reference</h4>
+	<p>See Doctrine's 
+		<a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#property-mapping" target="_blank">
+			Mapping Types documentation.
+		</a>
+	</p>
+    
+    <a href="https://symfony.com/doc/current/book/doctrine.html#learn-more" target="_blank">
+    	<h4>Learn more</h4>
+    </a>
+        
+	
+	
+	
+	
+{% endblock %}

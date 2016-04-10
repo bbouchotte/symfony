@@ -1,0 +1,39 @@
+validation:
+    resource: "@ValidationBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+testing:
+    resource: "@TestingBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+db:
+    resource: "@DbBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+bundle_system:
+    resource: "@BundleSystemBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+config:
+    resource: "@ConfigBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+
+template:
+    resource: "@TemplateBundle/Controller/"
+    type:     annotation
+
+
+twig:
+    resource: "@TwigBundle/Controller/"
+    type:     annotation
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
+    prefix:   /

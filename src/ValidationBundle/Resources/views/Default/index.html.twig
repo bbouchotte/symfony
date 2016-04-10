@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<h1>Validation</h1>
+	<pre>// src/AppBundle/Entity/Author.php
+namespace ValidationBundle\Entity;
+use Symfony\Component\Validator\Constraints as Assert;
+
+class Author {
+    /**
+     * @Assert\NotBlank()
+     */
+    public $name;
+}</pre>
+	<pre>use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Entity\Author;
+
+public function authorAction() {
+    $author = new Author();
+    // ... do something to the $author object
+
+    $validator = $this->get('validator');
+    $errors = $validator->validate($author);
+
+    if (count($errors) > 0) {
+        // Uses a __toString method on the $errors variable which is a object. This gives us a nice string for debugging.
+        $errorsString = (string) $errors;
+        return new Response($errorsString);
+    }
+    return new Response('The author is valid! Yes!');
+}</pre>
+
+	<p>Each validation error (called a "constraint violation"), is represented by a ConstraintViolation object.</p>
+
+	<h4>Validation and Forms</h4>
+	<pre>use AppBundle\Entity\Author;
+use AppBundle\Form\AuthorType;
+use Symfony\Component\HttpFoundation\Request;
+// ...
+public function updateAction(Request $request) {
+    $author = new Author();
+    $form = $this->createForm(AuthorType::class, $author);
+    $form->handleRequest($request);
+    if ($form->isValid()) {
+        // the validation passed, do something with the $author object
+        return $this->redirectToRoute(...);
+    }
+    return $this->render('author/form.html.twig', array(
+        'form' => $form->createView(),
+    ));
+}</pre>
+
+	<h4>Configutation</h4>
+	<p>The Symfony validator is enabled by default</p>
+	<pre># app/config/config.yml
+framework:
+    validation: { enable_annotations: true }</pre>
+    
+    <h4>Constraints</h4>
+    <p>
+		<a href="https://symfony.com/doc/current/reference/constraints/NotBlank.html" target="_blank">
+    		NotBlank
+    	</a>, 
+		<a href="https://symfony.com/doc/current/reference/constraints/Blank.html" target="_blank">
+    		Blank
+    	</a>, 
+    	<a href="https://symfony.com/doc/current/reference/constraints/NotNull.html" target="_blank">
+    		NotNull
+    	</a>, 
+    	<a href="https://symfony.com/doc/current/reference/constraints/IsNull.html" target="_blank">
+    		IsNull
+    	</a>
+    	<a href="https://symfony.com/doc/current/reference/constraints/IsTrue.html" target="_blank">
+    		IsTrue
+    	</a>, 
+	    <a href="https://symfony.com/doc/current/reference/constraints/IsFalse.html" target="_blank">
+    		IsFalse
+    	</a>, 
+		<a href="https://symfony.com/doc/current/reference/constraints/Type.html" target="_blank">
+    		Type
+    	</a>.
+	</p>      
+    
+    <p>
+	    <a href="https://symfony.com/doc/current/book/validation.html#string-constraints" target="_blank">
+	    	String Constraints
+	    </a>: Email, Length, Url, Regex, Ip, Uuid</p>
+    <p>
+	    <a href="https://symfony.com/doc/current/reference/constraints/Range.html" target="_blank">
+	    	Number Constraints : Range.
+	    </a>
+	</p>
+	<p>
+	    <a href="https://symfony.com/doc/current/book/validation.html#comparison-constraints" target="_blank">
+	    	Comparison Constraints
+	    </a>: EqualTo, NotEqualTo, IdenticalTo, NotIdenticalTo, LessThan, LessThanOrEqual, GreaterThan, GreaterThanOrEqual.</p>
+	<p>
+		<a href="https://symfony.com/doc/current/book/validation.html#date-constraints" target="_blank">
+			Date Constraints
+		</a>: Date, DateTime, Time.
+	</p>
+	<p>
+		<a href="https://symfony.com/doc/current/book/validation.html#collection-constraints" target="_blank">
+			Collection Constraints
+		</a>: Choice, Collection, Count, UniqueEntity, Language, Locale, Country.
+	</p>
+	<p>
+		<a href="https://symfony.com/doc/current/book/validation.html#file-constraints" target="_blank">
+			File Constraints
+		</a>: File, Image.
+	</p>
+	<p>
+		<a href="" target="_blank">
+			Financial and other Number Constraints
+		</a>: Bic, CardScheme, Currency, Luhn, Iban, Isbn, Issn.
+	</p>
+	<p>
+		<a href="https://symfony.com/doc/current/book/validation.html#other-constraints" target="_bank">
+			Other Constraints
+		</a>: Callback, Expression, All, UserPassword, Valid.
+	</p>
+	<p>
+		<a href="https://symfony.com/doc/current/cookbook/validation/custom_constraint.html" target="_blank">
+			How to Create a custom Validation Constraint
+		</a>
+	</p>
+	
+			
+
+			
+			
+
+		
+		    
+    
+
+    
+    
+	
+	
+
+
+
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'TemplateBundle::base.html.twig' %}
+
+{% block body %}
+
+	<a href="https://symfony.com/doc/current/book/templating.html" target="_blank">
+		<h2>Creating and Using Templates</h2>
+	</a>
+	
+	<p>Petit tuto OC sur Twig:
+		<a href="https://openclassrooms.com/courses/utilisation-de-twig-un-moteur-de-templates" target="_blank">
+			Utilisation de Twig, un moteur de templates !
+		</a>
+	</p>
+		<a href="{{ path('memoTwig') }}">
+  		Memo twig
+	</a>
+		
+	<h4>Linking, including</h4>
+
+	<a href="{{ path('homeArticle') }}">
+  		Article
+	</a>
+	<br />
+	
+	<a href="https://symfony.com/doc/current/book/templating.html#embedding-controllers" target="blank">
+		Embedding Controllers
+	</a>
+	
+	<h4>
+		<a href="https://symfony.com/doc/current/book/templating.html#linking-to-assets" target="_blank">
+			Linking to Assets
+		</a>
+	</h4>
+	<img src="{{ asset('images/mael.jpg') }}" alt="Symfony!" />
+	<img src="{{ absolute_url(asset('images/mael.jpg')) }}" alt="Symfony!" />
+	<br />
+	
+	<h4>
+		<a href ="https://symfony.com/doc/current/book/templating.html#including-stylesheets-and-javascripts-in-twig" target="_blank">
+			Including Stylesheets and JavaScripts in Twig
+		</a>
+	</h4>
+	include assets located in your bundles Resources/public folder
+	<pre>php bin/console assets:install target [--symlink]</pre>
+	
+	<h4>
+		<a href="https://symfony.com/doc/current/book/templating.html#global-template-variables" target="_blank">
+			Global Template Variables
+		</a>
+	</h4>
+	<p>app.user : The current user object.</p>
+	<p>app.request: The request object.</p>
+	<p>app.session: The session object.</p>
+	<p>app.environment: The current environment (dev, prod, etc).</p>
+	<p>app.debug: True if in debug mode. False otherwise. </p>
+	<!--p>Username: {# app.user.username #}</p-->
+	{% if app.debug %}
+	    <p>Request method: {{ app.request.method }}</p>
+	    <p>Application Environment: {{ app.environment }}</p>
+	{% endif %}
+	<a href="https://symfony.com/doc/current/cookbook/templating/global_variables.html" target="_blank" >
+		Cookbook - Global Variables
+	</a>
+	
+	<h4>
+		<a href="https://symfony.com/doc/current/book/templating.html#configuring-and-using-the-templating-service" target="_blank">
+			Configuring and Using the templating Service
+		</a>			
+	</h4>
+	
+	<h4><a heref="https://symfony.com/doc/current/book/templating.html#overriding-bundle-templates" target="blank">
+		Overriding Bundle Templates</a>
+	</h4>
+	<p>To override the bundle template, just copy the index.html.twig template from the bundle to app/Resources/AcmeBlogBundle/views/Blog/index.html.twig (the app/Resources/AcmeBlogBundle directory won't exist, so you'll need to create it). You're now free to customize the template.</p>
+	<p>clear your cache: php bin/console cache:clear, even if you are in debug mode.</p>
+	<p>This logic also applies to base bundle templates.</p>
+	<a href="https://symfony.com/doc/current/cookbook/bundles/inheritance.html" target="_blank">
+		How to Use Bundle Inheritance to Override Parts of a Bundle.
+	</a>
+	
+	<h4><a href="https://symfony.com/doc/current/book/templating.html#overriding-core-templates" target="_blank">
+		Overriding Core Templates</a>
+	</h4>
+	<p>Since the Symfony Framework itself is just a bundle, core templates can be overridden in the same way. For example, the core TwigBundle contains a number of different "exception" and "error" templates that can be overridden by copying each from the Resources/views/Exception directory of the TwigBundle to, you guessed it, the app/Resources/TwigBundle/views/Exception directory.</p>
+	
+	<h4>
+		<a href="https://symfony.com/doc/current/book/templating.html#three-level-inheritance" target="_blank">
+			Three-level Inheritance
+		</a>
+	</h4>
+	
+	<h4>
+		<a href="https://symfony.com/doc/current/book/templating.html#output-escaping" target="_blank">
+			Output Escaping
+		</a>
+	</h4>
+	<p>In twig, escaping is on by default.</p>
+	
+	<h4><a href="https://symfony.com/doc/current/book/templating.html#debugging" target="_blank">
+		Debugging</a>
+	</h4>
+	{{ render(controller('TemplateBundle:Template:debugging')) }}
+
+	<h4><a href="https://symfony.com/doc/current/book/templating.html#syntax-checking" target="_blank">
+		Syntax Checking</a>
+	</h4>
+	<pre># You can check by filename:
+$ php bin/console lint:twig app/Resources/views/article/recent_list.html.twig
+
+# or by directory:
+$ php bin/console lint:twig app/Resources/views</pre>
+
+	<h4><a href="https://symfony.com/doc/current/book/templating.html#template-formats" target="_blank">
+		Template Formats</a>
+	</h4>
+	 <pre> {% verbatim %}public function indexAction(Request $request) {
+    $format = $request->getRequestFormat();
+    return $this->render('article/index.'.$format.'.twig');
+} {% endverbatim %}</pre>
+    <pre>{% filter e %} {% verbatim %}<a href="{{ path('article_show', {'id': 123, '_format': 'pdf'}) }}">PDF Version</a>
+{% endverbatim %}{% endfilter %}</pre>
+	<a href="https://symfony.com/doc/current/book/routing.html#advanced-routing-example" target="_blank">
+		Advanced Example in the Routing chapter.
+	</a>
+	
+
+		
+{% endblock %}

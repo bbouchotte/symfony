@@ -1,0 +1,44 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+	<h2>Mysql</h2>
+	
+	<a href="http://dev.mysql.com/doc/refman/5.7/en/linux-installation-yum-repo.html#yum-install-components" target="_blank">
+		Installation
+	</a>
+	<p> 
+		<a href="http://dev.mysql.com/downloads/repo/yum/" target="_blank">
+			Download MySQL Yum Repository
+		</a>
+	</p>
+	<p>start service: <span class="pre">sudo service mysqld start</span></p>
+	<p>check the status of the MySQL server: <span class="pre">sudo service mysqld status</span></p>
+	<p> A superuser account 'root'@'localhost is created. A password for the superuser is set and stored in the error log file. To reveal it, use the following command: 
+		<span class="pre">grep 'temporary password' /var/log/mysqld.log</span>
+	</p>
+	<p>Change the root password as soon as possible by logging in with the generated, temporary password and set a custom password for the superuser account: 
+		<span class="pre">mysql -uroot -p</span>
+	</p>
+	<p>mysql> 
+		<span class="pre">ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass4!';</span>
+	</p>
+	<p>mysql> 
+		<span class="pre">select user();</span>
+	</p>
+	<p>mysql> 
+		<span class="pre">show databases;</span>
+	</p>
+	<p>mysql> 
+		<span class="pre">create database test_project;</span>
+	</p>	
+	<p>mysql> 
+		<span class="pre">use test_project;</span>
+	</p>	
+	<p>
+		<span class="pre">dnf install php-mysqlnd</span>
+	</p>
+
+	
+	
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+	<a href="https://symfony.com/doc/current/book/configuration.html" target="_blank">
+		<h2>Configuring Symfony (and Environments)</h2>
+	</a>
+	
+	<p>dump the default configuration for a bundle in YAML:
+		<span class="pre">
+			php bin/console config:dump-reference FrameworkBundle
+		</span> 
+		ou 
+		<span class="pre">
+			php bin/console config:dump-reference framework
+		</span>
+	</p>
+	
+	<h4>Environments</h4>
+	<p>- dev: <span class="pre">http://localhost/app_dev.php/random/10</span></p>
+	<p>- prod: <span class="pre">http://localhost/app.php/random/10</span>
+	<p>- test</p>
+	<p>Clear the cache: <span class="pre">php bin/console cache:clear --env=prod --no-debug</span>
+
+{% endblock %}

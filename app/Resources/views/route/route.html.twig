@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<h3>Création d'une URL sous twig</h3>
+	
+	<h4>URL relative</h4>	
+	<a href="{{ path('blog_show', {'page': 5}) }}">
+  		Read this blog post.
+	</a>
+	
+	<h4>URL absolue</h4>
+	<a href="{{ url('blog_show', {'page': 5}) }}">
+  		Read this blog post.
+	</a>
+
+{% endblock %}

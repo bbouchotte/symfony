@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Articles<h1>
+
+    {% for article in articles %}
+        {{ include('article/article_details.html.twig', { 'article': article }) }}
+        {#  If you needed to pass in multiple elements, it would look like this: {'foo': foo, 'bar': bar}. #}
+    {% endfor %}
+{% endblock %}

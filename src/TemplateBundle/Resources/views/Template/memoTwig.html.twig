@@ -1,0 +1,143 @@
+{% extends 'TemplateBundle::base.html.twig' %}
+
+{% block title %}Mémo Twig{% endblock %}
+
+{% block body %}
+
+	<h2>Mémo Twig</h2>
+	
+	<a href="https://openclassrooms.com/courses/utilisation-de-twig-un-moteur-de-templates" target="_blank">
+		Cours OC
+	</a>
+	<p>
+		{{  '{{ variable }}' }} pour afficher une variable.<br />
+		{{  '{# commentaire  #}' }}<br />
+		{% verbatim %}
+			{{ array['key'] }} et {{ array.key }}font exactement la même chose <br />
+		{% endverbatim %}
+	</p>
+	
+	<h4>Les filtres</h4>
+	<p>
+		(on peut en créer) : upper, lower, title, length, escape (ou e)
+		<br />
+		{{  '{{ text }}' }} : {{ text }} <br />
+		{% verbatim %}
+			{{ text | lower | title}} :
+		{% endverbatim %}
+		{{ text | lower | title}}
+	</p>
+	
+	<h4>Les filtres sur les blocs</h4>
+	<p>
+		{% verbatim %}
+			{% filter upper|escape %}			
+			    je vais être écrit en majuscule <em>et échappé</em>			
+			{% endfilter %}
+		{% endverbatim %} :
+		{% filter upper|escape %}
+	    		je vais être écrit en majuscule <em>et échappé</em>
+			{% endfilter %}
+		 <br />
+	</p>
+	<p>Si autoespace à true, on peut faire:</p>
+	<p>
+		{% verbatim %}
+			{% autoescape false %}
+				<strong>Je vais être affiché en gras</strong>
+			{% endautoescape %}
+		{% endverbatim %}
+	</p>
+		
+	<h4>Les conditions</h4>
+	{% verbatim %}
+		<pre>{% if online > 1 %}
+    Il y a {{ online }} membres en ligne
+{% elseif online == 1 %}
+    Il n'y a qu'un seul utilisateur en ligne (Vous !)
+{% else %}
+    Il n'y a aucun utilisateur en ligne. Cette phrase ne sera, en principe, jamais lue sauf par toi. Ô grand développeur !.
+{% endif %}</pre>
+	{% endverbatim %}
+	
+	<h4>Les tests</h4>
+	<p>defined, divisbleby, empty</p>
+	<p>
+		{% verbatim %}
+			{% if equipe.volley is divisibleby(6) %}
+	    		L'équipe sera divisé en 2 équipes de 6.
+			{% endif %}
+		{% endverbatim %}
+	</p>	
+	
+	<h4>La boucle for</h4>
+	<p>
+		{% verbatim %}
+			{% for i in 0..50 %}
+		    	Ceci est la ligne {{ i }}
+			{% endfor %}<br />
+			{% for letter in 'a'..'d' %}
+    			La lettre {{ letter }} est lettre numéro {{ loop.index }} de l'alphabet.   
+			{% endfor %}
+		{% endverbatim %}
+		<br />
+		{% for letter in 'a'..'d' %}
+    			La lettre {{ letter }} est lettre numéro {{ loop.index }} de l'alphabet.<br />
+		{% endfor %}
+	</p>
+	<p>Boucle sur un tableau avec condition:</p>
+	<p>
+		{% verbatim %}
+			{% for joueur in club if equipe is not empty %}
+	    		Le joueur {{ joueur.nom }} joue dans l'équipe {{ joueur.equipe }}
+			{% endfor %}
+		{% endverbatim %}
+	</p>
+	
+	<h4>Définir des variables</h4>
+	<p>
+		{% verbatim %}
+			{% set var = "val" %}<br>
+			{% set mascotte, os = 'beastie', 'bsd' %}
+		{% endverbatim %}
+	</p>
+	
+	<h4>Ajouts pratiques</h4>
+	<p>
+		{% verbatim %}
+			{% include 'header.twig' %}<br />
+			{% include 'fichier.twig' with {'var': 'val'} only %}<br />
+			{% include online ? 'options.twig' : 'connexion.twig' %}<br />
+			
+		{% endverbatim %}
+	</p>
+	
+	<h4>Les imports</h4>
+	<p>Dans form.html.twig :</p>
+	<pre>{% filter escape %}{% verbatim %}{% macro input(name, value, type, size) %}
+    <input type="{{ type|default('text') }}" name="{{ name }}" value="{{ value|e }}" size="{{ size|default(20) }}" />
+{% endmacro %}
+
+{% macro textarea(name, value, rows) %}
+    <textarea name="{{ name }}" rows="{{ rows|default(10) }}" cols="{{ cols|default(40) }}">{{ value|e }}</textarea>
+{% endmacro %}{% endverbatim %}{% endfilter %}</pre>
+	<p>Dans ce template :</p>
+	<pre>{% filter escape %}{% verbatim %}{% import 'forms.html.twig' as forms %}
+<dl>
+    <dt>Username</dt>
+    <dd>{{ forms.input('username') }}</dd>
+    <dt>Password</dt>
+    <dd>{{ forms.input('password', none, 'password') }}</dd>
+</dl>
+<p>{{ forms.textarea('comment') }}</p>{% endverbatim %}{% endfilter %}</pre>
+
+	{% import 'TemplateBundle:Template:forms.html.twig' as forms %}
+	<dl>
+	    <dt>Username</dt>
+	    <dd>{{ forms.input('username') }}</dd>
+	    <dt>Password</dt>
+	    <dd>{{ forms.input('password', none, 'password') }}</dd>
+	</dl>
+	<p>{{ forms.textarea('comment') }}</p>
+	
+{% endblock %}

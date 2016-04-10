@@ -1,0 +1,80 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+	<a href="https://symfony.com/doc/current/book/bundles.html" target="_blank">
+		<h2>The Bundle System</h2>
+	</a>
+	
+	<p>
+		Cookbook: best practice of 
+		<a href="https://symfony.com/doc/current/cookbook/bundles/best_practices.html" target="_blank">
+			bundles</a>.		
+	</p>
+	
+	<p>
+		Bundles used in your applications must be enabled by registering them in the registerBundles() method of the AppKernel class in app/AppKernel.php
+	</p>
+	
+	<a href="https://symfony.com/doc/current/book/bundles.html#creating-a-bundle" target="_blank">
+		<h4>Creating a Bundle</h4>
+	</a>
+	<p>Start by creating a src/Acme/TestBundle/ directory and adding a new file called AcmeTestBundle.php:</p>
+	<div class="pre">
+		<p>
+			// src/Acme/TestBundle/AcmeTestBundle.php<br />
+			namespace Acme\TestBundle;<br />
+			<br />
+			use Symfony\Component\HttpKernel\Bundle\Bundle;<br />
+			<br />
+			class AcmeTestBundle extends Bundle<br />
+			{<br />
+			}
+		</p>
+	</div>
+	<p>Now that you've created the bundle, enable it via the AppKernel class:</p>
+	<div class="pre">
+		<p>
+			// app/AppKernel.php<br />
+			public function registerBundles()<br />
+			{<br />
+			    $bundles = array(<br />
+			        // ...<br />
+				<br />
+			        // register your bundle<br />
+			        new Acme\TestBundle\AcmeTestBundle(),<br />
+			    );<br />
+			    // ...<br />
+				<br />
+			    return $bundles;<br />
+			}
+		</p>
+	</div>
+	<p>Symfony also provides a command-line interface for generating a basic bundle skeleton:</p>
+	<p class="pre">php bin/console generate:bundle --namespace=Acme/TestBundle</p>
+	
+	<a href="https://symfony.com/doc/current/book/bundles.html#bundle-directory-structure" target="_blank">
+		<h4>Bundle Directory Structure</h4>
+	</a>
+	
+	<p>
+		Controller/<br />
+		    Contains the controllers of the bundle (e.g. RandomController.php).<br />
+		DependencyInjection/<br />
+		    Holds certain Dependency Injection Extension classes, which may import service configuration, register compiler passes or more (this directory is not necessary).<br />
+		Resources/config/<br />
+		    Houses configuration, including routing configuration (e.g. routing.yml).<br />
+		Resources/views/<br />
+		    Holds templates organized by controller name (e.g. Hello/index.html.twig).<br />
+		Resources/public/<br />
+		    Contains web assets (images, stylesheets, etc) and is copied or symbolically linked into the project web/ directory via the assets:install console command.<br />
+		Tests/<br />
+		    Holds all tests for the bundle. 
+	</p>
+	
+	<p>
+		third-party bundles: <a href="http://knpbundles.com" target="_blank">http://knpbundles.com</a>
+	</p>
+	
+	
+{% endblock %}

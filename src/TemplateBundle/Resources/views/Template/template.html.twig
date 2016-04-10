@@ -1,0 +1,28 @@
+{% extends 'TemplateBundle::base.html.twig' %}
+
+{# Référencement d'un template: Bundle:directory:filename #}
+{# directory = Ressources/view/directory #}
+
+{% block title %}Mon premier Twig{% endblock %}
+
+{% block body %}
+	{{ parent() }}
+	<p>
+		When debug mode is disabled (common in the prod environment), clear the Twig cache directory
+	 	so that the Twig templates will regenerate.
+ 	</p>
+	{% for i in 0..10 %}
+      <span style="color: {{ cycle(['blue', 'green', 'red'], i) }}">
+      	item n°{{ i }},  
+      </span>
+	{% endfor %}
+	
+	<p> Nombres aléatoires supérieurs à 50:<p>
+	<p>
+		{% for number in numbers if number > 50 %}
+			{{ number }}, 
+		{% endfor %}
+	</p>
+	<p>Including template:</p>
+
+{% endblock %}
