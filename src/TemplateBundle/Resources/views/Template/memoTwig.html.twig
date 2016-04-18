@@ -17,6 +17,17 @@
 		{% endverbatim %}
 	</p>
 	
+	<h4>Echapper les accolades</h4>
+	<p>
+		{% verbatim %}
+			{{  '{{ variable }}' }}
+		{% endverbatim %}
+	</p>
+	<p>Ou un bloc</p>
+	<p>	{{ '{% verbatim %}' }}</p>
+	<p>	{{ '{% endverbatim %}' }}</p>
+	
+	
 	<h4>Les filtres</h4>
 	<p>
 		(on peut en créer) : upper, lower, title, length, escape (ou e)

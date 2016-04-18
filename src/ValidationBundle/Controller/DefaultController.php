@@ -7,7 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use ValidationBundle\Entity\Author;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\AuthorType;
-
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class DefaultController extends Controller
 {
@@ -42,7 +43,7 @@ class DefaultController extends Controller
      * @Route("/validationUpdate", name="validationUpdate")
      */
     public function validationUpdateAction(Request $request) {
-    	$author = new $author;
+    	$author = new Author;
     	$form = $this->createForm(AuthorType::class, $author);
     	$form->handleRequest($request);
     	if ($form->isValid()) {
@@ -53,4 +54,39 @@ class DefaultController extends Controller
     	));
     }
     
+    /**
+     * @Route("/translation", name="translation") 
+     */
+    public function translationAction() {
+    	return $this->render('ValidationBundle:Default:translation.html.twig');
+    }
+    
+    /**
+     * @Route("/addEmail/{email}", name="addEmail")
+     */
+    public function addEmailAction($email)
+    {
+    	$emailConstraint = new Assert\Email();
+    	// all constraint "options" can be set this way
+    	$emailConstraint->message = 'Invalid email address';
+    	
+    	// use the validator to validate the value
+    	$errorList = $this->get('validator')->validate(
+    			$email,
+    			$emailConstraint
+    			);
+    
+    	if (0 === count($errorList)) {
+    		// ... this IS a valid email address, do something
+    		return new Response('Email is valid.');
+    	} else {
+    		// this is *not* a valid email address
+    		$errorMessage = $errorList[0]->getMessage();
+    
+    		// ... do something with the error
+    		return new Response('Email isn\'t valid.<br />' . var_dump($errorList));
+    	}
+    
+    	// ...
+    }
 }
