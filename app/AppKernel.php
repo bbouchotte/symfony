@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new DbBundle\DbBundle(),
             new TestingBundle\TestingBundle(),
             new ValidationBundle\ValidationBundle(),
+            new FormsBundle\FormsBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

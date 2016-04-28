@@ -1,3 +1,8 @@
+forms:
+    resource: "@FormsBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 validation:
     resource: "@ValidationBundle/Controller/"
     type:     annotation
