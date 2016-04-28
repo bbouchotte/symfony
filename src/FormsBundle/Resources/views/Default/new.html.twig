@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+	{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'form_control' }}) }}
+	
+	{% if task is defined %}
+		{{ form.vars.value.task }}
+	{% endif %}
+	
+	{% if personage is defined %}
+		{{ form.vars.value.personage }}
+	{% endif %}
+	
+	{{ form_errors(form) }}
+	{{ form_widget(form) }}
+	{{ form_end(form) }}
+	
+{% endblock %}
